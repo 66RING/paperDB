@@ -55,7 +55,44 @@ https://zhuanlan.zhihu.com/p/468732214
 
 ## PowerGraph
 
-https://zhuanlan.zhihu.com/p/38042241
+> https://zhuanlan.zhihu.com/p/38042241
+>
+> https://www.usenix.org/conference/osdi12/technical-sessions/presentation/gonzalez
+>
+> Thank like a vertex
+
+论点：高出入度, 且难分割
+
+- 主要方法: 将High-Degree的结点分割到不同机器
+- 新抽象GAS: 分前分后操作相同
+
+- 挑战
+    * 串行地遍历邻居
+    * 发送信息给所有邻居
+    * 大量的邻居结点数据(单机无法存下)
+
+- 通信开销
+    * 分析了各个模型的通信复杂度
+
+- demo
+    * 每个结点分配一个virtual的vertex(mirror)
+    * Gather
+        1. partial sum
+        2. send partial sum to master node
+        3. final sum
+    * Apply: 用户定义apply函数
+        1. 利用final sum计算
+        2. replica to all mirrors
+    * Scatter: 在每个机器上执行更新(因为主结点已经更新了(apply))
+
+- 最小化通信
+    * we cut vertex
+    * 将vertex的边分配到集群
+        1. 随机边分配
+        2. 基于贪心的边分配
+
+
+
 
 ## PageRank
 
