@@ -221,6 +221,63 @@
 
 核心函数: `optimize_graph`
 
+### QA
+
+> 所以, 怎么个relax法, 就是所有可能都尝试
+
+We increase the space of optimizations considered by relaxing
+the strict performance constraint, allowing any substitutions
+that preserve semantics whether or not they improve performance.
+
+> 那搜索空间怎么办? 回溯算法
+
+To efficiently explore this larger
+space of computation graphs, we use backtracking search
+over a set of relaxed graph substitutions to find improved
+networks after multiple substitution steps.
+
+> 那现有的实现为什么不用回溯算法?
+
+因为这里所谓的backtracking不是直接的回溯, 是做图切分然后再在子图上搜索, 并不一定是全局最优。子图是span少的
+
+> 这么多种模式是怎么匹配然后替换的? S3? THE METAFLOW SEARCH ALGORITHM? TODO
+
+- 不脱离数学等价性
+- 一种type只能映射到一种type
+- wildcard可以映射到任何type
+
+搜索算法, 剪枝+近似最优
+
+- 搜索算法要素
+    1. 代价模型: FLOPs, memory usage, and number of kernel launches
+        - operator量化: 静态的 + 硬件相关的
+            * 硬件相关的只记录部分有代表性的即可, ref. 一处采样到处使用
+    2. 算法: backtracking + 细分子图 + 子图最优组合出全局最优
+        1. cost优先队列, 小cost优先出
+        2. G出队, 算新图G'入队
+        3. 使用参数控制搜索时间和严格度, a越大搜索空间越大, a=1就只找严格优
+            - a可以看成是cost的宽容度`Cost(G') < a * Cost(G)`
+    3. Flow-Based Recursive Graph Split
+        - TODO: redo
+
+> ok, 搜索有了那怎么做子图替换呢? 即`G' = Si(G)`伪代码
+
+定义一系列"混合器", 枚举组合
+
+```cpp
+  // NOTE: "混合器"
+  xfers.push_back(create_fuse_conv_batch_xfer(model));
+  xfers.push_back(create_fuse_mm_acti_xfer(model));
+  xfers.push_back(create_fuse_conv_relu_xfer(model));
+  xfers.push_back(create_merge_mm_xfer(model));
+  xfers.push_back(create_merge_conv_xfer(model));
+  xfers.push_back(create_exclusive_concat_xfer(model));
+  xfers.push_back(create_resnet_merge_xfer(model));
+
+  for (int i = 0; i < xfers.size(); i++)
+      xfers[i]->run(0, subGraph, candidates, hashmap, bestCost * alpha, edgeWeights, firstGraph);
+```
+
 
 ## OSP: Overlapping Computation and Communication in Parameter Server for Fast Machine Learning
 
