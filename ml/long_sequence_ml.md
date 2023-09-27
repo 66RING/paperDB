@@ -171,6 +171,8 @@ kNN lookup to pick up the most relevant tokens
         + **AI懂得抽象吗?**
         + 抽象, 展开, 抽象, 展开
         + aka, 分模块的生成式AI
+        + 参考[无限外推的ReRoPE](https://kexue.fm/archives/9708)中提出的窗口概念
+            + 多层attention就相当于多层展开了
     * 外置大脑的多级调节: kNN, PageRank, trainable things
         + 滑动窗口
         + 外置大脑等价于细胞分化:
