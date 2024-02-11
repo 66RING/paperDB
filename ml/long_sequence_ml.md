@@ -130,6 +130,7 @@ kNN lookup to pick up the most relevant tokens
 > [DeepSpeed Ulysses](https://zhuanlan.zhihu.com/p/652206513)
 
 - 一种序列的分布式计算方法
+- - 序列并行的本质是用多卡来处理一个序列, 比如原本的数据量是sd, 序列长度乘其他数据的大小d。序列并行后每个GPU就只用处理sd/N了
 
 
 ## misc
